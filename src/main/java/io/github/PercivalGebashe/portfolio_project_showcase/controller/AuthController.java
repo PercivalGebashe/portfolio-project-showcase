@@ -81,7 +81,6 @@ public class AuthController {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
             authService.sendVerificationToken(email, baseUrl);
 
-            // Always return success message to prevent email enumeration
             return ResponseEntity.ok(new ApiResponseDTO(true, "Email verification link sent", null));
         } catch (MessagingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -2,10 +2,7 @@ package io.github.PercivalGebashe.portfolio_project_showcase.model;
 
 import io.github.PercivalGebashe.portfolio_project_showcase.model.enums.EmailValidationStatusEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "email_validation_status", schema = "public")
@@ -13,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class EmailValidationStatus {
 
     @Id
@@ -21,7 +19,8 @@ public class EmailValidationStatus {
     private Integer emailValidationStatusId;
 
     @Column(name = "status_description", nullable = false, unique = true)
-    private String statusDescription;
+    @Enumerated(EnumType.STRING)
+    private EmailValidationStatusEnum statusDescription;
 
     public EmailValidationStatusEnum getStatusEnum() {
         return EmailValidationStatusEnum.fromId(this.emailValidationStatusId);

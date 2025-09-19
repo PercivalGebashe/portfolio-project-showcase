@@ -17,6 +17,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Profile {
 
     @Id

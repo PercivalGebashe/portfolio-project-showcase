@@ -2,6 +2,7 @@ package io.github.PercivalGebashe.portfolio_project_showcase.model.enums;
 
 import lombok.Getter;
 
+@Getter
 public enum RoleEnum {
     ROLE_USER(1),
     ROLE_ADMIN(2);
@@ -17,7 +18,4 @@ public enum RoleEnum {
         throw new IllegalArgumentException("Invalid Role id: " + id);
     }
 
-    public int getId() {
-        return id;
-    }
 }

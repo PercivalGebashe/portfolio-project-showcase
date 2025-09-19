@@ -41,7 +41,7 @@ public class CommentController {
     ) {
 
         Comment comment = new Comment();
-        comment.setProject(new Project()); // set projectId
+        comment.setProject(new Project());
         comment.getProject().setProjectId(projectId);
 
         comment.setUserAccount(new UserAccount());

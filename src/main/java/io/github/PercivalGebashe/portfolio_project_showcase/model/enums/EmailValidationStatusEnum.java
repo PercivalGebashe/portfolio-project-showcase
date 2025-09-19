@@ -2,6 +2,7 @@ package io.github.PercivalGebashe.portfolio_project_showcase.model.enums;
 
 import lombok.Getter;
 
+@Getter
 public enum EmailValidationStatusEnum {
     PENDING(1),
     VERIFIED(2),
@@ -18,9 +19,5 @@ public enum EmailValidationStatusEnum {
             if (status.getId() == id) return status;
         }
         throw new IllegalArgumentException("Invalid EmailValidationStatus id: " + id);
-    }
-
-    public int getId() {
-        return id;
     }
 }

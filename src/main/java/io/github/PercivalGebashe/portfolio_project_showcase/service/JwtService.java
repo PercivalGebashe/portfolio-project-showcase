@@ -75,7 +75,7 @@ public class JwtService {
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        long refreshExpiration = jwtExpirationMillis * 6;
+        long refreshExpiration = jwtExpirationMillis * 4;
         long now = System.currentTimeMillis();
 
         return Jwts.builder()

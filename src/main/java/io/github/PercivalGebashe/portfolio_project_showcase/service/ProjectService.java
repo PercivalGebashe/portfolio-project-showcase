@@ -46,8 +46,10 @@ public class ProjectService {
 
     // Get all projects for a user
     public List<Project> getProjectsForUser(Integer userId) {
-        UserAccount user = userAccountRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        boolean exists = userAccountRepository.existsById(userId);
+                if(!exists){
+                    throw new RuntimeException("User not found");
+                }
         return projectRepository.findByUserAccount_UserId(userId);
     }
 

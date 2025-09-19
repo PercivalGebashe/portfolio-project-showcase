@@ -2,8 +2,10 @@ package io.github.PercivalGebashe.portfolio_project_showcase.service;
 
 import io.github.PercivalGebashe.portfolio_project_showcase.dto.RegistrationRequestDTO;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.EmailValidationStatus;
+import io.github.PercivalGebashe.portfolio_project_showcase.model.Role;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.UserAccount;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.EmailValidationStatusRepository;
+import io.github.PercivalGebashe.portfolio_project_showcase.repository.RoleRepository;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.UserAccountRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,15 @@ public class AuthService{
 
     private final UserAccountRepository userAccountRepository;
     private final EmailValidationStatusRepository emailValidationStatusRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
     @Autowired
-    public AuthService(UserAccountRepository userAccountRepository, EmailValidationStatusRepository emailValidationStatusRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public AuthService(UserAccountRepository userAccountRepository, EmailValidationStatusRepository emailValidationStatusRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userAccountRepository = userAccountRepository;
         this.emailValidationStatusRepository = emailValidationStatusRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
@@ -37,13 +41,24 @@ public class AuthService{
 
     public Integer registerUser(RegistrationRequestDTO requestDTO, String baseUrl) throws MessagingException {
         UserAccount userAccountDetails = new UserAccount();
+        EmailValidationStatus emailValidationStatus = emailValidationStatusRepository.findById(1)
+                .orElseThrow(() -> new RuntimeException("Email validation status not found"));
+
+        Role role = roleRepository.findById(1)
+                        .orElseThrow(() -> new RuntimeException("Role id not found"));
 
         userAccountDetails.setEmail(requestDTO.emailAddress());
         userAccountDetails.setPasswordHash(passwordEncoder.encode(requestDTO.password()));
+        userAccountDetails.setRole(role);
+        userAccountDetails.setEmailValidationStatus(emailValidationStatus);
         userAccountDetails.setConfirmationToken(generateVerificationToken());
         userAccountDetails.setConfirmationTokenExpiration(Timestamp.valueOf(LocalDateTime.now().plusHours(24)).toLocalDateTime());
 
+        System.out.println("To save: " + userAccountDetails);
+
         UserAccount savedAccountDetails =  userAccountRepository.save(userAccountDetails);
+
+        System.out.println("Saved: " + savedAccountDetails);
         sendVerificationEmail(savedAccountDetails, baseUrl);
 
         return savedAccountDetails.getUserId();
@@ -63,7 +78,6 @@ public class AuthService{
 
             EmailValidationStatus verifiedStatus = emailValidationStatusRepository.findById(2)
                     .orElseThrow(() -> new RuntimeException("Email validation status not found"));
-            verifiedStatus.setStatusDescription("VERIFIED");
 
             userAccount.setEmailValidationStatus(verifiedStatus);
             userAccount.setConfirmationToken(null);
