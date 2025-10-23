@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleafe.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Project Deep Dive</title>
+    <link rel="stylesheet" href="/css/project-upload.css">
+    <script src="/js/project-upload.js" defer></script>
+</head>
+<body>
+
+<section class="deep-dive-form">
+    <h1>Create Project Deep Dive</h1>
+
+    <form th:action="@{/project/create/{userId}(userId=${loggedInUser.userId})}"
+          th:object="${projectDTO}" method="post">
+
+        <!-- Project Title -->
+        <div class="input-box">
+            <input type="text" th:field="*{title}" placeholder=" " required>
+            <label>Project Title</label>
+        </div>
+
+        <!-- Project Summary -->
+        <div class="input-box">
+            <textarea th:field="*{summary}" rows="4" placeholder=" " required></textarea>
+            <label>Project Summary</label>
+        </div>
+
+        <!-- Project repoLink -->
+        <div class="input-box">
+            <input type="url" th:field="*{repoLink}" placeholder="https://example.com" required />
+            <label>Repository Link</label>
+        </div>
+
+        <!-- Dynamic Content Items -->
+        <div class="section-block" id="dynamicSection">
+            <h2>Project Details</h2>
+            <div id="contentContainer"></div>
+            <button type="button" class="add-btn" onclick="addParagraph()">+ Paragraph</button>
+            <button type="button" class="add-btn" onclick="addScreenshot()">+ Screenshot</button>
+        </div>
+
+        <button type="submit" class="submit-btn">Save Project</button>
+    </form>
+</section>
+</body>
+</html>

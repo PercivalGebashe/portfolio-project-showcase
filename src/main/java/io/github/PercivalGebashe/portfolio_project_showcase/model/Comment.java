@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"project", "userAccount"})
 public class Comment {
 
     @Id
@@ -29,8 +29,8 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private UserAccount userAccount;
 
-    @Column(name = "commenter_user_id")
-    private Integer commenterId;
+//    @Column(name = "commenter_user_id")
+//    private Integer commenterId;
 
     @Column(name = "content")
     private String content;

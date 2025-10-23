@@ -6,6 +6,7 @@ import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,12 @@ public class UserAccountService {
             throw new RuntimeException("Confirmation token expired");
         }
         userAccountRepository.delete(userAccount);
+        System.out.println("Account deleted");
+    }
+
+    public UserAccount findAccountByEmail(String email){
+        return userAccountRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
     @Async
@@ -66,7 +73,7 @@ public class UserAccountService {
                     </p>
                     <!-- Confirmation Button -->
                     <div style="text-align: center; margin: 25px 0;">
-                        <a href="%s/api/v1/user/confirm-delete?token=%s"
+                        <a href="%s/user/confirm-delete?token=%s"
                             style="display: inline-block; padding: 15px 30px; font-size: 16px; background-color: #666666; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; width: 80%%; max-width: 300px;">
                         Delete Account
                         </a>
@@ -76,7 +83,7 @@ public class UserAccountService {
                         If the button doesn't work, copy and paste the following link into your browser:
                     </p>
                     <p style="word-break: break-all; font-size: 14px; color: #0073aa; line-height: 1.4;">
-                        %s/api/v1/user/confirm-delete?token=%s
+                        %s/user/confirm-delete?token=%s
                     </p>
                     <p style="font-size: 12px; color: #888; margin-top: 25px;">
                         If you did not request this, please ignore this email.
@@ -87,5 +94,11 @@ public class UserAccountService {
         """, baseUrl, token, baseUrl, token);
 
         emailService.sendVerification(userAccount.getEmail(), subject, htmlMessage);
+    }
+
+    public UserAccount findByUserId(Integer userId) {
+
+        return userAccountRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
     }
 }

@@ -8,9 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_accounts", schema = "public")
@@ -18,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"profile"})
 public class UserAccount implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +55,12 @@ public class UserAccount implements UserDetails {
 
     @Column(name = "recovery_token_expiration")
     private LocalDateTime recoveryTokenExpiration;
+
+    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Profile profile;
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Experience> experiences;
+
 
     @PrePersist
     protected void onCreate() {

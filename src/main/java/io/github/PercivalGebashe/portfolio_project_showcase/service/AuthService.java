@@ -2,15 +2,24 @@ package io.github.PercivalGebashe.portfolio_project_showcase.service;
 
 import io.github.PercivalGebashe.portfolio_project_showcase.dto.RegistrationRequestDTO;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.EmailValidationStatus;
+import io.github.PercivalGebashe.portfolio_project_showcase.model.Profile;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.Role;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.UserAccount;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.EmailValidationStatusRepository;
+import io.github.PercivalGebashe.portfolio_project_showcase.repository.ProfileRepository;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.RoleRepository;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.UserAccountRepository;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -25,21 +34,30 @@ public class AuthService{
     private final UserAccountRepository userAccountRepository;
     private final EmailValidationStatusRepository emailValidationStatusRepository;
     private final RoleRepository roleRepository;
+    private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthService(UserAccountRepository userAccountRepository, EmailValidationStatusRepository emailValidationStatusRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public AuthService(UserAccountRepository userAccountRepository, EmailValidationStatusRepository emailValidationStatusRepository, RoleRepository roleRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder, EmailService emailService, AuthenticationManager authenticationManager) {
         this.userAccountRepository = userAccountRepository;
         this.emailValidationStatusRepository = emailValidationStatusRepository;
         this.roleRepository = roleRepository;
+        this.profileRepository = profileRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.authenticationManager = authenticationManager;
     }
 
 
 
+    @Transactional
     public Integer registerUser(RegistrationRequestDTO requestDTO, String baseUrl) throws MessagingException {
+        if(userAccountRepository.existsByEmail(requestDTO.getEmailAddress().toLowerCase())){
+            System.out.println("Already Exists");
+            throw new RuntimeException("Username already exists.");
+        }
         UserAccount userAccountDetails = new UserAccount();
         EmailValidationStatus emailValidationStatus = emailValidationStatusRepository.findById(1)
                 .orElseThrow(() -> new RuntimeException("Email validation status not found"));
@@ -47,8 +65,8 @@ public class AuthService{
         Role role = roleRepository.findById(1)
                         .orElseThrow(() -> new RuntimeException("Role id not found"));
 
-        userAccountDetails.setEmail(requestDTO.emailAddress());
-        userAccountDetails.setPasswordHash(passwordEncoder.encode(requestDTO.password()));
+        userAccountDetails.setEmail(requestDTO.getEmailAddress().toLowerCase());
+        userAccountDetails.setPasswordHash(passwordEncoder.encode(requestDTO.getPassword()));
         userAccountDetails.setRole(role);
         userAccountDetails.setEmailValidationStatus(emailValidationStatus);
         userAccountDetails.setConfirmationToken(generateVerificationToken());
@@ -57,6 +75,17 @@ public class AuthService{
         System.out.println("To save: " + userAccountDetails);
 
         UserAccount savedAccountDetails =  userAccountRepository.save(userAccountDetails);
+
+        Profile profile = new Profile();
+        profile.setUserAccount(savedAccountDetails);
+        profile.setFirstName(requestDTO.getFirstName());
+        profile.setLastName(requestDTO.getLastName());
+
+        Profile savedProfile = profileRepository.save(profile);
+
+        System.out.println("SavedProfile:" + savedProfile);
+
+
 
         System.out.println("Saved: " + savedAccountDetails);
         sendVerificationEmail(savedAccountDetails, baseUrl);
@@ -89,8 +118,19 @@ public class AuthService{
         }
     }
 
+    public UserAccount authenticate(String email, String password, HttpServletRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email.toLowerCase(), password)
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        request.getSession(true)
+                .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                        SecurityContextHolder.getContext());
+        return userAccountRepository.findByEmail(email).get();
+    }
+
     public void sendVerificationToken(String emailAddress, String baseUrl) throws MessagingException {
-        Optional<UserAccount> userLoginOptional = userAccountRepository.findByEmail(emailAddress);
+        Optional<UserAccount> userLoginOptional = userAccountRepository.findByEmail(emailAddress.toLowerCase());
 
         if(userLoginOptional.isPresent()){
             UserAccount userAccount = userLoginOptional.get();
@@ -124,7 +164,7 @@ public class AuthService{
             
             <!-- Verification Button -->
             <div style="text-align: center; margin: 25px 0;">
-                <a href="%s/api/v1/auth/verify?token=%s"
+                <a href="%s/auth/verify?token=%s"
                    style="display: inline-block; padding: 15px 30px; font-size: 16px; background-color: #666666; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; width: 80%%; max-width: 300px;">
                    Verify Account
                 </a>
@@ -135,7 +175,7 @@ public class AuthService{
                 If the button doesn't work, copy and paste the following link into your browser:
             </p>
             <p style="word-break: break-all; font-size: 14px; color: #0073aa; line-height: 1.4;">
-                %s/api/v1/auth/verify?token=%s
+                %s/auth/verify?token=%s
             </p>
             
             <p style="font-size: 12px; color: #888; margin-top: 25px;">

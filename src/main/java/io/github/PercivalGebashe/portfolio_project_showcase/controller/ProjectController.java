@@ -1,76 +1,76 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.controller;
 
 import io.github.PercivalGebashe.portfolio_project_showcase.dto.ProjectDTO;
-import io.github.PercivalGebashe.portfolio_project_showcase.model.Project;
-import io.github.PercivalGebashe.portfolio_project_showcase.service.ProjectService;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.UserAccount;
-import io.github.PercivalGebashe.portfolio_project_showcase.dto.ApiResponseDTO;
-
-import org.springframework.http.ResponseEntity;
+import io.github.PercivalGebashe.portfolio_project_showcase.service.ProfileService;
+import io.github.PercivalGebashe.portfolio_project_showcase.service.ProjectService;
+import io.github.PercivalGebashe.portfolio_project_showcase.service.UserAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-@RestController
-@RequestMapping("/api/v1/projects")
+@Controller
+@RequestMapping("/project")
 public class ProjectController {
 
+    private final ProfileService profileService;
+    private final UserAccountService userAccountService;
     private final ProjectService projectService;
 
-    public ProjectController(ProjectService projectService) {
+    @Autowired
+    public ProjectController(ProfileService profileService, UserAccountService userAccountService, ProjectService projectService) {
+        this.profileService = profileService;
+        this.userAccountService = userAccountService;
         this.projectService = projectService;
     }
 
-    // CREATE a project
-    @PostMapping
-    public ResponseEntity<ApiResponseDTO> createProject(
-            @RequestParam Integer userId,
-            @RequestBody ProjectDTO projectDTO
+    @GetMapping("/create/{userId}")
+    public String showCreateProjectForm(
+            @PathVariable Integer userId,
+            Model model){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)){
+
+            Object principal = authentication.getPrincipal();
+
+            if(principal instanceof UserAccount authenticatedUser) {
+
+                UserAccount dbUser = profileService.findByUserId(userId).getUserAccount();
+
+                if(dbUser != null && dbUser.getUserId().equals(authenticatedUser.getUserId())) {
+
+                    model.addAttribute("loggedInUser", dbUser);
+                    model.addAttribute("projectDTO", new ProjectDTO());
+                    return "project-upload";
+                }
+            }
+        }
+        return "redirect:/profile/" + userId;
+    }
+
+    @PostMapping("/create/{userId}")
+    public String createProject(
+            @PathVariable Integer userId,
+            @ModelAttribute ProjectDTO projectDTO
     ) {
-        Project project = projectService.createProject(userId, projectDTO);
-        return ResponseEntity.ok(new ApiResponseDTO(
-                true,
-                "Project created",
-                Map.of("project",project)));
-    }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    // GET project by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> getProject(@PathVariable Integer id) {
-        Project project = projectService.getProjectById(id);
-        return ResponseEntity.ok(new ApiResponseDTO(true, "Project retrieved", Map.of(
-                "project", project
-        )));
-    }
+        if(authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)){
+            Object principal = authentication.getPrincipal();
 
-    // GET all projects for a user
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponseDTO> getProjectsForUser(@PathVariable Integer userId) {
-        List<Project> projects = projectService.getProjectsForUser(userId);
-        return ResponseEntity.ok(new ApiResponseDTO(true,
-                "Projects retrieved",
-                Map.of("projects",projects)));
-    }
-
-    // UPDATE a project
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> updateProject(
-            @PathVariable Integer id,
-            @RequestBody ProjectDTO projectDTO
-    ) {
-        Project updated = projectService.updateProject(id, projectDTO);
-        return ResponseEntity.ok(new ApiResponseDTO(
-                true,
-                "Project updated",
-                Map.of("project", updated)));
-    }
-
-    // DELETE a project
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> deleteProject(@PathVariable Integer id) {
-        projectService.deleteProject(id);
-        return ResponseEntity.ok(new ApiResponseDTO(true, "Project deleted", null));
+            if(principal instanceof UserAccount authenticatedUser){
+                UserAccount dbUser = profileService.findByUserId(userId).getUserAccount();
+                if (dbUser != null && dbUser.getUserId().equals(authenticatedUser.getUserId())) {
+                    projectService.createProject(userId, projectDTO);
+                }
+            }
+        }
+        return "redirect:/profile/" + userId;
     }
 }

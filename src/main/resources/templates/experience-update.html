@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Experience | DevPort</title>
+    <link rel="stylesheet" href="/css/experience-update.css">
+    <script src="/js/experience-update.js" defer></script>
+</head>
+<body>
+
+<header id="header">
+    <nav class="navbar">
+        <div class="logo"><a th:href="@{/index}">DevPort</a></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/profile/{userId}(userId=${loggedInUser.userId})}">Back to Profile</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="experience-update-section">
+    <h2>Update Experience</h2>
+
+    <form method="post" th:action="@{/experience/update/{userId}(userId=${loggedInUser.userId})}" class="experience-form" enctype="multipart/form-data">
+        <!-- Hidden input to store all experiences as JSON -->
+        <input type="hidden" name="experiences" id="experiencesJson" />
+        <input type="hidden" name="userId" id="userId" th:value="${loggedInUser.userId}"/>
+
+        <!-- Existing experiences -->
+        <div th:if="${!(loggedInUser.experiences.isEmpty())}" th:each="exp : ${loggedInUser.experiences}" class="experience-card">
+            <div class="form-group">
+                <label>Position</label>
+                <input type="text" class="position" th:value="${exp.position}" required />
+            </div>
+            <div class="form-group">
+                <label>Company</label>
+                <input type="text" class="company" th:value="${exp.companyName}" required />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="description" rows="3" th:text="${exp.description}"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Technology Used</label>
+                <input type="text" class="technologies"
+                       th:value="${!(exp.technologies.isEmpty()) ? T(java.lang.String).join(', ', exp.technologies) : ''}" />
+
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" class="startDate" th:value="${exp.startDate}" required />
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" class="endDate" th:value="${exp.endDate}" />
+                </div>
+                <div class="form-group checkbox">
+                    <label><input type="checkbox" class="isCurrent" th:checked="${exp.isCurrent}" /> Current</label>
+                </div>
+            </div>
+            <button type="button" class="btn btn-remove">Remove</button>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-add">Add New Experience</button>
+            <button type="submit" class="btn btn-save">Save Changes</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

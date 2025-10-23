@@ -28,10 +28,9 @@ public class ProjectService {
 
         Project project = new Project();
         project.setUserAccount(user);
-        project.setTitle(projectDTO.title());
-        project.setDescription(projectDTO.description());
-        project.setRepoLink(projectDTO.repoLink());
-        project.setDemoLink(projectDTO.demoLink());
+        project.setTitle(projectDTO.getTitle());
+        project.setSummary(projectDTO.getSummary());
+        project.setRepoLink(projectDTO.getRepoLink());
         project.setCreatedAt(LocalDateTime.now());
         project.setUpdatedAt(LocalDateTime.now());
 
@@ -57,10 +56,10 @@ public class ProjectService {
     public Project updateProject(Integer projectId, ProjectDTO projectDTO) {
         Project project = getProjectById(projectId);
 
-        project.setTitle(projectDTO.title());
-        project.setDescription(projectDTO.description());
-        project.setRepoLink(projectDTO.repoLink());
-        project.setDemoLink(projectDTO.demoLink());
+        project.setTitle(projectDTO.getTitle());
+        project.setSummary(projectDTO.getSummary());
+        project.setContent(projectDTO.getContent());
+        project.setRepoLink(projectDTO.getRepoLink());
         project.setUpdatedAt(LocalDateTime.now());
 
         return projectRepository.save(project);

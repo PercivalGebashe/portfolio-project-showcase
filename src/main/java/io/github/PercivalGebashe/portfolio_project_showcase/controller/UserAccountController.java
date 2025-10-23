@@ -1,15 +1,17 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.controller;
 
-import io.github.PercivalGebashe.portfolio_project_showcase.dto.ApiResponseDTO;
 import io.github.PercivalGebashe.portfolio_project_showcase.service.UserAccountService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@RestController
-@RequestMapping("/api/v1/user")
+@Controller
+@RequestMapping("/user")
 public class UserAccountController {
 
     private final UserAccountService userAccountService;
@@ -20,26 +22,18 @@ public class UserAccountController {
     }
 
     @DeleteMapping("/request-delete")
-    public ResponseEntity<ApiResponseDTO> requestDeleteAccount(@RequestParam(name = "email") String email)
+    public String requestDeleteAccount(@RequestParam(name = "email") String email)
             throws MessagingException {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         userAccountService.requestDeleteAccount(email, baseUrl);
 
-        return ResponseEntity.ok(new ApiResponseDTO(
-                true,
-                "Account delete request received. Delete confirmation email sent.",
-                null
-        ));
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/confirm-delete")
-    public ResponseEntity<ApiResponseDTO> confirmDelete(@RequestParam String token) {
+    public String confirmDelete(@RequestParam String token) {
         userAccountService.confirmDelete(token);
 
-        return ResponseEntity.ok(new ApiResponseDTO(
-                true,
-                "User account successfully deleted",
-                null
-        ));
+        return "redirect:/auth/signup";
     }
 }

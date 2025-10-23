@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Portfolio Hub</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<header th:fragment="navbar" class="navbar">
+    <div class="logo">DevPort</div>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/developers">Browse</a>
+        <a href="/about">About</a>
+    </nav>
+    <div class="search-filter">
+        <form th:action="@{/developers}" method="get">
+            <input type="text" name="search" placeholder="Search developers...">
+            <select name="language">
+                <option value="">Filter by Language</option>
+                <option>Java</option>
+                <option>Python</option>
+                <option>React</option>
+                <option>Spring Boot</option>
+            </select>
+            <button type="submit">Go</button>
+        </form>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <h1>Discover Developers. Hire Talent. Build Teams.</h1>
+    <p>Browse developers by skills, projects, and more.</p>
+</section>
+
+<!-- Cards Section -->
+<section class="cards">
+    <div class="card" th:each="dev : ${developers}">
+        <div class="card-banner" th:style="'background-image:url(' + ${dev.bannerImageUrl} + ')'"></div>
+        <div class="profile-pic">
+            <img th:src="${dev.profileImageUrl}" alt="Dev">
+        </div>
+        <h3 th:text="${dev.name}">Dev Name</h3>
+        <p class="tagline" th:text="${dev.tagline}">Tagline</p>
+        <div class="card-footer">
+            <span><ion-icon name="heart"></ion-icon><span th:text="${dev.likesCount}">0</span></span>
+            <span><ion-icon name="comment-bubble"></ion-icon><span th:text="${dev.projectsCount}">0</span> Projects</span>
+            <span>💡
+          <span th:each="skill, iterStat : ${dev.topSkills}">
+            <span th:text="${skill}"></span>
+            <span th:if="${!iterStat.last}">, </span>
+          </span>
+        </span>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 DevPort. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

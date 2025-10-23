@@ -1,11 +1,9 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,40 +15,44 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"userAccount"})
 public class Profile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
-    private Integer profileId;
+    @Column(name = "user_id")
+    private Integer userId;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @MapsId
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_profiles_user_id")
+    )
     private UserAccount userAccount;
 
-    @NotBlank
     @Column(name = "first_name")
     private String firstName;
 
-    @NotBlank
     @Column(name = "last_name")
     private String lastName;
 
     @Column(name = "tagline")
     private String tagline;
 
-    @Column(name = "bio")
+    @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
-    @Column(name = "skills", columnDefinition = "TEXT")
-    private String skills; // JSON string: {"Java":"Intermediate","Python":"Beginner"}
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "skills", columnDefinition = "JSONB")
+    private Map<String, String> skills = new HashMap<>(); // JSON string: {"Java":"Intermediate","Python":"Beginner"}
 
     @Column(name = "profile_picture_url")
     private String profilePictureUrl;
 
-    @Column(name = "contact_links", columnDefinition = "TEXT")
-    private String contactLinks; // JSON string: {"github":"https://...","linkedin":"https://..."}
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "contact_links", columnDefinition = "JSONB")
+    private Map<String, String> contactLinks = new HashMap<>(); // JSON string: {"github":"https://...","linkedin":"https://..."}
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -69,38 +71,8 @@ public class Profile {
         updatedAt = LocalDateTime.now();
     }
 
-    // JSON helpers
     public Map<String, String> getSkillsMap() {
-        if (skills == null || skills.isBlank()) return new HashMap<>();
-        try {
-            return new ObjectMapper().readValue(skills, new TypeReference<Map<String, String>>() {});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse skills JSON", e);
-        }
-    }
-
-    public void setSkillsMap(Map<String, String> skillsMap) {
-        try {
-            this.skills = new ObjectMapper().writeValueAsString(skillsMap);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize skills JSON", e);
-        }
-    }
-
-    public Map<String, String> getContactLinksMap() {
-        if (contactLinks == null || contactLinks.isBlank()) return new HashMap<>();
-        try {
-            return new ObjectMapper().readValue(contactLinks, new TypeReference<Map<String, String>>() {});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse contactLinks JSON", e);
-        }
-    }
-
-    public void setContactLinksMap(Map<String, String> contactLinksMap) {
-        try {
-            this.contactLinks = new ObjectMapper().writeValueAsString(contactLinksMap);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize contactLinks JSON", e);
-        }
+        if (skills == null || skills.isEmpty()) return new HashMap<>();
+        return skills;
     }
 }

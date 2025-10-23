@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/profile-update.css">
+    <script src="/js/profile-update.js" defer></script>
+    <title th:text="${profileUpdate.firstName} + ' ' + ${profileUpdate.lastName} + ' | Profile Update'">Profile Update</title>
+</head>
+<body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const existingSkills = /*[[${profileUpdate.skills}]]*/ {};
+    const existingContacts = /*[[${profileUpdate.contactLinks}]]*/ {};
+    /*]]>*/
+</script>
+
+<header id="header">
+    <nav class="navbar">
+        <div class="logo"><a th:href="@{/index}">DevPort</a></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/profile/{userId}(userId=${userId})}">Back to Profile</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="edit-profile-section">
+    <h2>Edit Your Profile</h2>
+    <form id="profileForm"
+          th:action="@{/profile/update/{userId}(userId=${profileUpdate.userId})}"
+          th:object="${profileUpdate}" method="post" enctype="multipart/form-data">
+
+        <!-- Basic Info -->
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" th:field="*{firstName}" placeholder="John" required/>
+        </div>
+
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" th:field="*{lastName}" placeholder="Doe" required/>
+        </div>
+
+        <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" th:field="*{tagline}" placeholder="Back-End Developer | Problem Solver Extraordinaire" />
+        </div>
+
+        <div class="form-group">
+            <label>Bio</label>
+            <textarea th:field="*{bio}" rows="5" placeholder="Tell us about yourself"></textarea>
+        </div>
+
+        <div class="form-group">
+<!--            <label>Profile Picture URL</label>-->
+<!--            <input type="text" th:field="*{profilePictureUrl}" placeholder="https://example.com/photo.jpg"/>-->
+            <label>Upload Profile Image</label>
+            <input type="file" name="file">
+        </div>
+
+        <!-- Skills Section -->
+        <div class="form-group dynamic-group" id="skills-group">
+            <label>Skills</label>
+            <div class="dynamic-container" id="skills-container"></div>
+            <button type="button" id="add-skill" class="btn-small">+ Add Skill</button>
+        </div>
+
+        <!-- Contact Links Section -->
+        <div class="form-group dynamic-group" id="contacts-group">
+            <label>Contact Links</label>
+            <div class="dynamic-container" id="contacts-container"></div>
+            <button type="button" id="add-contact" class="btn-small">+ Add Contact</button>
+        </div>
+
+        <!-- Hidden JSON fields -->
+        <input type="hidden" name="skills" id="skills">
+        <input type="hidden" name="contactLinks" id="contacts">
+
+        <button type="submit" class="btn">Update Profile</button>
+    </form>
+</section>
+</body>
+</html>

@@ -9,7 +9,7 @@ public class CommentMapper {
                 comment.getCommentId(),
                 comment.getProject().getProjectId(),
                 comment.getUserAccount().getUserId(),
-                comment.getCommenterId(),
+//                comment.getCommenterId(),
                 comment.getContent(),
                 comment.getCreatedAt(),
                 comment.getUpdatedAt()

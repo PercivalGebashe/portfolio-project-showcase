@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/signup.css" />
+    <script src="/js/signup.js" defer></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <title>Sign Up</title>
+</head>
+<body>
+<section>
+    <form th:action="@{/auth/signup}" th:object="${registerRequest}" method="post">
+        <h1>Sign Up</h1>
+
+        <div class="input-box">
+            <ion-icon name="person-outline"></ion-icon>
+            <input type="text" th:field="*{firstName}" id="first-name" required>
+            <label for="first-name">First Name</label>
+            <div th:if="${#fields.hasErrors('firstName')}" class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span th:errors="*{firstName}"></span>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <ion-icon name="person-outline"></ion-icon>
+            <input type="text" th:field="*{lastName}" id="last-name" required>
+            <label for="last-name">Last Name</label>
+            <div th:if="${#fields.hasErrors('lastName')}" class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span th:errors="*{lastName}"></span>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" th:field="*{emailAddress}" id="signup-email" required>
+            <label for="signup-email">Email</label>
+            <div th:if="${#fields.hasErrors('emailAddress')}" class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span th:errors="*{emailAddress}"></span>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="password" th:field="*{password}" id="signup-password" required>
+            <label for="signup-password">Password</label>
+            <div th:if="${#fields.hasErrors('password')}" class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span th:errors="*{password}"></span>
+            </div>
+        </div>
+
+        <div th:if="${errorMessage}" class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <button type="submit">Sign Up</button>
+
+        <div class="register">
+            <p>Already have an account? <a th:href="@{/auth/login}">Log In</a></p>
+        </div>
+    </form>
+</section>
+</body>
+</html>

@@ -1,12 +1,13 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.PercivalGebashe.portfolio_project_showcase.dto.ProjectDescriptionDTO;
+import io.github.PercivalGebashe.portfolio_project_showcase.dto.ProjectDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "projects", schema = "public")
@@ -14,10 +15,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"userAccount"})
 public class Project {
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +30,14 @@ public class Project {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description", columnDefinition = "jsonb")
-    private String descriptionJson;
+    @Column(name = "summary", columnDefinition = "TEXT")
+    private String summary;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "content", columnDefinition = "JSONB")
+//    @Convert(converter = ContentListConverter.class)
+    private List<ProjectDTO.ContentItem> content;
+
 
     @Column(name = "repo_link")
     private String repoLink;
@@ -56,27 +61,5 @@ public class Project {
     @PreUpdate
     protected void onUpdate(){
         this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * Sets the JSON description from a ProjectDescription object.
-     */
-    public void setDescription(ProjectDescriptionDTO description) {
-        try {
-            this.descriptionJson = objectMapper.writeValueAsString(description);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize project description", e);
-        }
-    }
-
-    /**
-     * Gets the description as a ProjectDescription object.
-     */
-    public ProjectDescriptionDTO getDescription() {
-        try {
-            return objectMapper.readValue(this.descriptionJson, ProjectDescriptionDTO.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to deserialize project description", e);
-        }
     }
 }

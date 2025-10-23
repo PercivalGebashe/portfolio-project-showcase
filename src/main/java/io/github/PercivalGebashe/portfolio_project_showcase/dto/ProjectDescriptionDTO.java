@@ -1,4 +1,14 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.dto;
 
+import lombok.*;
+
 import java.util.List;
-public record ProjectDescriptionDTO(List<ProjectParagraphDTO> paragraphs){}
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+public class ProjectDescriptionDTO{
+    private List<ProjectParagraphDTO> paragraphs;
+}

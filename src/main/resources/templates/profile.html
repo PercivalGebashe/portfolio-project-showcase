@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${profile.firstName} + ' ' +  ${profile.lastName} + ' | Profile'"></title>
+    <link rel="stylesheet" href="/css/profile.css">
+    <script src="/js/profile.js" defer></script>
+</head>
+<body>
+
+<!-- ===== Header / Navigation ===== -->
+<header id="header">
+    <nav class="navbar">
+        <div class="logo"><a th:href="@{/index}">DevPort</a></div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <!-- Create Button Dropdown -->
+            <div class="create-dropdown" th:if="${loggedInUser != null}">
+                <a class="btn-create" id="create-btn">Profile ▾</a>
+                <div class="dropdown-menu" id="create-menu">
+                    <a th:href="@{/profile/update/{userId}(userId=${loggedInUser.userId})}" class="dropdown-item">Update Profile</a>
+                    <a th:href="@{/experience/update/{user_id}(user_id=${loggedInUser.userId})}" class="dropdown-item">Update Experience</a>
+                    <a th:href="@{/project/create/{userId}(userId=${loggedInUser.userId})}" class="dropdown-item">Create Project</a>
+                    <a href="#" class="dropdown-item">Create Post</a>
+                    <a th:href="@{/auth/logout}" class="dropdown-item">Logout</a>
+                </div>
+            </div>
+        </ul>
+
+
+        <!-- If not logged in or not the profile owner -->
+        <div th:if="${loggedInUser == null}">
+            <a th:href="@{/auth/login}" class="btn-login">Login</a>
+        </div>
+        <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    </nav>
+</header>
+
+<!-- ===== Hero Section ===== -->
+<section id="hero" class="hero-section">
+    <div class="hero-content">
+        <h1>Hi, I'm
+            <span class="highlight" th:text="${profile.firstName} + ' ' + ${profile.lastName}">Full Name</span>
+        </h1>
+        <p th:text="${profile.tagline}">Tagline</p>
+
+        <!-- Social Icons -->
+        <div class="hero-social-links">
+            <a th:each="contact : ${profile.contactLinks}"
+               th:href="${contact.value}"
+               class="social-link"
+               target="_blank"
+               rel="noopener">
+                <img th:src="@{/icons/logo-{name}.svg(name=${contact.key.toLowerCase()})}"
+                     th:alt="${contact.key}"
+                     class="social-icon"/>
+            </a>
+        </div>
+
+        <a href="#projects" class="btn">View My Work</a>
+    </div>
+</section>
+
+<!-- ===== About Section ===== -->
+<section id="about" class="about-section">
+    <h2>About Me</h2>
+    <div class="about-content">
+<!--        <img th:src="@{profile.profilePictureUrl}" alt="Profile Picture" class="profile-photo" />-->
+        <img src="@{/media/images/{imageName}(imageName=${profile.profilePictureUrl})}" alt="Profile Picture" class="profile-photo" />
+        <div class="about-text" th:text="${profile.bio}">
+            Profile full Bio
+        </div>
+    </div>
+</section>
+
+<!-- ===== Skills Section ===== -->
+<section id="skills" class="skills-section">
+    <h2>Skills</h2>
+    <div class="skills-list">
+        <div class="skill" th:each="skill : ${profile.skills}">
+            <div class="skill-header">
+                <span class="skill-name" th:text="${skill.key}">Skill Name</span>
+                <span class="skill-level" th:text="${skill.value}">Level</span>
+            </div>
+            <div class="skill-bar">
+                <div class="skill-progress"
+                     th:classappend="'level-' + ${#strings.toLowerCase(skill.value)}">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Experience Section ===== -->
+<section id="experience" class="experience-section">
+    <h2>Experience</h2>
+
+    <div class="experience-container">
+        <div class="experience-item" th:each="exp : ${profile.userAccount.experiences}">
+            <div class="exp-date">
+                <span th:text="${#temporals.format(exp.startDate, 'MMMM yyyy')}"></span>
+                -
+                <span th:text="${exp.endDate != null ? #temporals.format(exp.endDate, 'MMMM yyyy') : 'Present'}"></span>
+            </div>
+
+            <div class="exp-content">
+                <h3>
+                    <span th:text="${exp.position}"></span>
+                    –
+                    <span class="exp-company" th:text="${exp.companyName}"></span>
+                </h3>
+
+                <p th:text="${exp.description}">
+                </p>
+
+                <!-- Tech tags -->
+                <div class="exp-tags">
+                    <span class="tag" th:each="tech : ${exp.technologies}" th:text="${tech}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Projects Section ===== -->
+<section id="projects" class="projects-section">
+    <h2>Projects</h2>
+    <div class="projects-grid">
+        <article class="project" th:each="project : ${projects}">
+            <img th:src="@{/project.projectThumbnailUrl}" alt="Portfolio Project Thumbnail" />
+            <h3 th:text="${project.title}"></h3>
+            <p th:text="${project.summary}"></p>
+            <a th:href="${project.repoLink}" class="btn" target="_blank" rel="noopener noreferrer">Project Repo</a>
+            <a th:href="@{/project/{projectId}(projectId=${project.projectId})}" class="btn" target="_blank" rel="noopener noreferrer">Deep Dive</a>
+        </article>
+    </div>
+</section>
+
+<!-- ===== Contact Section ===== -->
+<section id="contact" class="contact-section">
+    <h2>Contact Me</h2>
+    <p>Interested in working together or just saying hi? Let’s connect!</p>
+    <form th:action="@{/formsubmit/{email}(email=${profile.userAccount.email})}" method="POST" class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="email" name="email" placeholder="Your Email" required />
+        <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+        <button type="submit" class="btn">Send Message</button>
+    </form>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+    <p th:text="'&copy; 2025 ' + ${profile.firstName} + ' ' + ${profile.lastName} + '. All right reserved.'"></p>
+</footer>
+</body>
+</html>
