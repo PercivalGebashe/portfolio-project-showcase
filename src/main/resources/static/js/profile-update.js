@@ -86,3 +86,22 @@ document.getElementById("profileForm").addEventListener("submit", (event) => {
 
     event.target.submit();
 });
+
+document.getElementById('imageInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    const errorEl = document.getElementById('imageError');
+    const thumbnail = document.getElementById('thumbnail');
+
+    if (!file) return;
+
+    if (file.size > (2 * 1024 * 1024)) { // limit: 2MB
+        errorEl.style.display = 'block';
+        thumbnail.src = '/images/avatar-outline.svg';
+        return;
+    }
+
+    errorEl.style.display = 'none';
+    const reader = new FileReader();
+    reader.onload = e => thumbnail.src = e.target.result;
+    reader.readAsDataURL(file);
+});

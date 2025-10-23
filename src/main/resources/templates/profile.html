@@ -71,8 +71,7 @@
 <section id="about" class="about-section">
     <h2>About Me</h2>
     <div class="about-content">
-<!--        <img th:src="@{profile.profilePictureUrl}" alt="Profile Picture" class="profile-photo" />-->
-        <img src="@{/media/images/{imageName}(imageName=${profile.profilePictureUrl})}" alt="Profile Picture" class="profile-photo" />
+        <img th:src="${profile.profilePictureUrl}" alt="Profile Picture" class="profile-photo" />
         <div class="about-text" th:text="${profile.bio}">
             Profile full Bio
         </div>

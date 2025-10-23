@@ -32,6 +32,7 @@ public class ProfileService {
         profile.setLastName(requestDto.getLastName());
         profile.setTagline(requestDto.getTagline());
         profile.setBio(requestDto.getBio());
+        profile.setProfilePictureUrl(requestDto.getProfilePictureUrl());
         profile.setSkills(requestDto.getSkills());
         profile.setContactLinks(requestDto.getContactLinks());
 

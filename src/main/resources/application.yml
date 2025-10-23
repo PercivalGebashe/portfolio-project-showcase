@@ -9,7 +9,7 @@ spring:
     password: ${DB_PASS}
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
     properties:
@@ -50,4 +50,7 @@ security:
     issuer: ${spring.application.name}
     audience: web-clients
 
-imageUploadUrl: "someStrng"
+imageKit:
+  url-endpoint: ${IK_URL_ENDPOINT}
+  private-key: ${IK_PRIVATE_KEY}
+  public-key: ${IK_PUBLIC_KEY}

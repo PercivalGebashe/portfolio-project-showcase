@@ -4,6 +4,7 @@ import io.github.PercivalGebashe.portfolio_project_showcase.dto.ProfileUpdateDTO
 import io.github.PercivalGebashe.portfolio_project_showcase.model.Profile;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.Project;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.UserAccount;
+import io.github.PercivalGebashe.portfolio_project_showcase.service.MediaService;
 import io.github.PercivalGebashe.portfolio_project_showcase.service.ProfileService;
 import io.github.PercivalGebashe.portfolio_project_showcase.service.ProjectService;
 import jakarta.validation.Valid;
@@ -14,8 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 @RequestMapping("/profile")
@@ -24,12 +27,14 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final ProjectService projectService;
+    private final MediaService mediaService;
 
 
     @Autowired
-    public ProfileController(ProfileService profileService, ProjectService projectService) {
+    public ProfileController(ProfileService profileService, ProjectService projectService, MediaService mediaService) {
         this.profileService = profileService;
         this.projectService = projectService;
+        this.mediaService = mediaService;
     }
 
     // Display profile by user ID
@@ -60,7 +65,8 @@ public class ProfileController {
     @PostMapping("/update/{userId}")
     public String updateProfile(
             @PathVariable Integer userId,
-            @Valid @ModelAttribute("profileUpdate") ProfileUpdateDTO requestDto) {
+            @Valid @ModelAttribute("profileUpdate") ProfileUpdateDTO requestDto,
+            @RequestParam("image") MultipartFile file) throws ExecutionException, InterruptedException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -73,6 +79,8 @@ public class ProfileController {
                 UserAccount dbUser = profileService.findByUserId(userId).getUserAccount();
 
                 if(dbUser != null && dbUser.getUserId().equals(authenticatedUser.getUserId())) {
+                    String imageUrl = mediaService.uploadImage(userId, file).get();
+                    requestDto.setProfilePictureUrl(imageUrl);
                     profileService.updateProfile(userId, requestDto);
                 }
             }
