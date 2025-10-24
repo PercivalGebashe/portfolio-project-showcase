@@ -7,6 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,6 +41,10 @@ public class Project {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "image_urls", columnDefinition = "JSONB")
     private List<String> imageUrls;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "technologies", columnDefinition = "JSONB")
+    private List<String> technologies = new ArrayList<>();
 
 
     @Column(name = "repo_link")

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/project.css">
+    <title th:text="${project.title} + ' | Deep Dive'">Project Deep Dive</title>
+</head>
+<body>
+<header id="header">
+    <nav class="navbar">
+        <div class="logo"><a th:href="@{/index}">DevPort</a></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/profile/{userId}(userId=${project.userAccount.userId})}">Back to profile</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="deep-dive-container">
+    <section class="project-header">
+        <h1 th:text="${project.title}">Project Title</h1>
+        <p class="tagline" th:text="${project.summary}">Project tagline or short description.</p>
+        <a th:href="${project.repoLink}" class="btn" target="_blank" rel="noopener noreferrer">View Repository</a>
+    </section>
+
+    <section class="project-content" th:each="paragraph : ${project.content}">
+        <p th:text="${paragraph}">Lorem ipsum dolor sit amet...</p>
+    </section>
+
+    <section class="project-screenshots" th:if="${project.imageUrls}">
+        <h2>Screenshots</h2>
+        <div class="screenshots-grid">
+            <img th:each="screenshot : ${project.imageUrls}" th:src="${screenshot}" alt="Project Screenshot">
+        </div>
+    </section>
+
+    <section class="project-tech">
+        <h2>Technologies Used</h2>
+        <ul>
+            <li th:each="tech : ${project.technologies}" th:text="${tech}">Java</li>
+        </ul>
+    </section>
+</main>
+
+</body>
+</html>

@@ -36,6 +36,28 @@ public class ProjectController {
         this.mediaService = mediaService;
     }
 
+    @GetMapping("/{projectId}")
+    private String showProjectDetailsPage(@PathVariable Integer projectId,
+                                          Model model){
+        Project project = projectService.findByProjectId(projectId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)){
+            Object principal = authentication.getPrincipal();
+
+            if(principal instanceof UserAccount authenticatedUser){
+
+                UserAccount dbUser = project.getUserAccount();
+
+                if(dbUser.getUserId().equals(authenticatedUser.getUserId())){
+                    model.addAttribute("loggedInUser", dbUser);
+                }
+            }
+        }
+        model.addAttribute("project", project);
+        return "project";
+    }
+
     @GetMapping("/create/{userId}")
     public String showCreateProjectForm(
             @PathVariable Integer userId,

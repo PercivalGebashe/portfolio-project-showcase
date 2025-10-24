@@ -1,0 +1,176 @@
+:root {
+    --bg-color: #0f0f12;
+    --card-bg: #1a1a1f;
+    --text-color: #eaeaea;
+    --text-muted: #9a9a9a;
+    --accent-color: #4f8cff;
+    --accent-hover: #72a5ff;
+    --border-color: #2a2a2f;
+    --font-main: "Segoe UI", Roboto, sans-serif;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+}
+
+/* ==============================
+   NAVBAR
+============================== */
+header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.logo a {
+    text-decoration: none;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--accent-color);
+}
+
+/* Main container */
+.deep-dive-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Project header */
+.project-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.project-header .tagline {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.project-header .btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: var(--accent-color);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.project-header .btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+/* Paragraphs */
+.project-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+/* Screenshots */
+.project-screenshots h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.screenshots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.screenshots-grid img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    object-fit: cover;
+}
+
+/* Technologies */
+.project-tech h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent-color);
+}
+
+.project-tech ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    list-style: none;
+}
+
+.project-tech li {
+    background: #141418;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .deep-dive-container {
+        padding: 1rem;
+    }
+
+    .project-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .screenshots-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-tech ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

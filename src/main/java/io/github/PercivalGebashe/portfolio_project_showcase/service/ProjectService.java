@@ -80,4 +80,9 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
+    public Project findByProjectId(Integer projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Project with ID: %s. Not Found,", projectId)));
+    }
 }
