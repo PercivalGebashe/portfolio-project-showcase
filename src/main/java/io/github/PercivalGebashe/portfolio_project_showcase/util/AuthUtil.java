@@ -1,4 +1,4 @@
-package io.github.PercivalGebashe.portfolio_project_showcase;
+package io.github.PercivalGebashe.portfolio_project_showcase.util;
 
 import io.github.PercivalGebashe.portfolio_project_showcase.model.UserAccount;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

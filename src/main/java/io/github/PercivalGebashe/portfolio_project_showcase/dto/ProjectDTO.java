@@ -13,6 +13,7 @@ public class ProjectDTO {
     private String summary;
     private String repoLink;
     private List<ContentItem> content;
+    private List<String> imageUrls;
 
     public static class ContentItem {
         private String type; // "paragraph" or "screenshot"

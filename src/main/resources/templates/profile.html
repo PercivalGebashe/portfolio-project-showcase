@@ -132,11 +132,15 @@
     <h2>Projects</h2>
     <div class="projects-grid">
         <article class="project" th:each="project : ${projects}">
-            <img th:src="@{/project.projectThumbnailUrl}" alt="Portfolio Project Thumbnail" />
-            <h3 th:text="${project.title}"></h3>
-            <p th:text="${project.summary}"></p>
-            <a th:href="${project.repoLink}" class="btn" target="_blank" rel="noopener noreferrer">Project Repo</a>
-            <a th:href="@{/project/{projectId}(projectId=${project.projectId})}" class="btn" target="_blank" rel="noopener noreferrer">Deep Dive</a>
+            <img th:src="${project.imageUrls[0]}" alt="Portfolio Project Thumbnail" />
+            <div class="project-content">
+                <h3 th:text="${project.title}"></h3>
+                <p th:text="${project.summary}"></p>
+            </div>
+            <div class="project-actions">
+                <a th:href="${project.repoLink}" class="btn" target="_blank" rel="noopener noreferrer">Project Repo</a>
+                <a th:href="@{/project/{projectId}(projectId=${project.projectId})}" class="btn" target="_blank" rel="noopener noreferrer">Deep Dive</a>
+            </div>
         </article>
     </div>
 </section>

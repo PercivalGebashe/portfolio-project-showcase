@@ -35,8 +35,11 @@ public class Project {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "content", columnDefinition = "JSONB")
-//    @Convert(converter = ContentListConverter.class)
     private List<ProjectDTO.ContentItem> content;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "image_urls", columnDefinition = "JSONB")
+    private List<String> imageUrls;
 
 
     @Column(name = "repo_link")

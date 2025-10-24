@@ -19,6 +19,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -58,7 +61,7 @@ public class MediaService {
 
         Profile profile = profileOptional.get();
 
-        return uploadImage(userId, multipartFile)
+        return uploadProfileImage(userId, multipartFile)
                 .thenAccept(url -> {
                     if (url != null) {
                         profile.setProfilePictureUrl(url);
@@ -70,7 +73,69 @@ public class MediaService {
     }
 
     @Async
-    public CompletableFuture<String> uploadImage(Integer userId, MultipartFile multipartFile) {
+    public CompletableFuture<List<String>> upLoadImages(Integer projectId, List<MultipartFile> multipartFiles) {
+        try {
+            // Convert files to BufferedImages
+            List<BufferedImage> bufferedImages = multipartFiles.stream()
+                .map(part -> {
+                    try {
+                        return ImageIO.read(part.getInputStream());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+            if (bufferedImages.isEmpty()) {
+                return CompletableFuture.completedFuture(null);
+            }
+
+            // Process and upload each image concurrently
+            List<CompletableFuture<String>> uploadFutures = new ArrayList<>();
+
+            for (int i = 0; i < bufferedImages.size(); i++) {
+                BufferedImage img = bufferedImages.get(i);
+                String fileName = projectId + "_project_image_" + i;
+
+                uploadFutures.add(
+                    CompletableFuture.supplyAsync(() -> {
+                        try {
+                            // Convert to compressed JPG
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            Thumbnails.of(img)
+                                    .size(1200, 800)
+                                    .outputQuality(0.85f)
+                                    .outputFormat("jpg")
+                                    .toOutputStream(outputStream);
+
+                            byte[] imageBytes = outputStream.toByteArray();
+
+                            return uploadImageToRemote(imageBytes, fileName);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error uploading image " + fileName, e);
+                        }
+                    })
+                );
+            }
+
+            // Combine all async results into one list
+            CompletableFuture<Void> allUploads = CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0]));
+
+            return allUploads.thenApply(v ->
+                uploadFutures.stream()
+                    .map(CompletableFuture::join)
+                    .toList()
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CompletableFuture.completedFuture(null);
+        }
+    }
+
+    @Async
+    public CompletableFuture<String> uploadProfileImage(Integer userId, MultipartFile multipartFile) {
         try {
             BufferedImage bufferedImage = ImageIO.read(multipartFile.getInputStream());
 
@@ -88,7 +153,7 @@ public class MediaService {
 
             byte[] imageBytes = outputStream.toByteArray();
 
-            String url = uploadToRemote(imageBytes, (userId.toString() + "_profile_image"));
+            String url = uploadImageToRemote(imageBytes, (userId.toString() + "_profile_image"));
             return CompletableFuture.completedFuture(url);
 
         } catch (IOException | ForbiddenException | TooManyRequestsException | InternalServerException |
@@ -98,11 +163,12 @@ public class MediaService {
         }
     }
 
-    private String uploadToRemote(byte[] imageBytes, String fileName) throws ForbiddenException, TooManyRequestsException, InternalServerException, UnauthorizedException, BadRequestException, UnknownException {
+    private String uploadImageToRemote(byte[] imageBytes, String fileName) throws ForbiddenException, TooManyRequestsException, InternalServerException, UnauthorizedException, BadRequestException, UnknownException {
         FileCreateRequest fileCreateRequest = new FileCreateRequest(imageBytes, fileName);
         fileCreateRequest.setFolder("/projectshowcase/images/");
         fileCreateRequest.setUseUniqueFileName(true);
         Result result = imageKit.upload(fileCreateRequest);
         return result.getUrl();
     }
+
 }

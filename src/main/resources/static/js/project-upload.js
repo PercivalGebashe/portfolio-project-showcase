@@ -32,15 +32,10 @@ function addScreenshot() {
     const wrapper = document.createElement('div');
     wrapper.classList.add('dynamic-card');
 
-    const typeInput = document.createElement('input');
-    typeInput.type = "hidden";
-    typeInput.name = "content[].type";
-    typeInput.value = "screenshot";
-
     const valueInput = document.createElement('input');
     valueInput.type = "file"
-    valueInput.name = "content[].value";
-    valueInput.placeholder = "Screenshot URL...";
+    valueInput.name = "image";
+    valueInput.accepts = "image/pgn, image/jpg";
 
     const removeBtn = document.createElement('button');
     removeBtn.type = "button";
@@ -48,7 +43,6 @@ function addScreenshot() {
     removeBtn.classList.add('remove-btn');
     removeBtn.onclick = () => wrapper.remove();
 
-    wrapper.appendChild(typeInput);
     wrapper.appendChild(valueInput);
     wrapper.appendChild(removeBtn);
     container.appendChild(wrapper);

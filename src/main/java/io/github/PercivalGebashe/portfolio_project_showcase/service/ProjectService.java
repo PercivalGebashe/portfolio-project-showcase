@@ -5,6 +5,7 @@ import io.github.PercivalGebashe.portfolio_project_showcase.model.Project;
 import io.github.PercivalGebashe.portfolio_project_showcase.model.UserAccount;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.ProjectRepository;
 import io.github.PercivalGebashe.portfolio_project_showcase.repository.UserAccountRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class ProjectService {
     }
 
 
+    @Transactional
     public Project createProject(Integer userId, ProjectDTO projectDTO) {
         UserAccount user = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -53,6 +55,7 @@ public class ProjectService {
     }
 
     // Update project
+    @Transactional
     public Project updateProject(Integer projectId, ProjectDTO projectDTO) {
         Project project = getProjectById(projectId);
 
@@ -65,7 +68,13 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    @Transactional
+    public Project updateProject(Project project){
+        return projectRepository.save(project);
+    }
+
     // Delete project
+    @Transactional
     public void deleteProject(Integer projectId) {
         Project project = getProjectById(projectId);
         projectRepository.delete(project);

@@ -79,7 +79,7 @@ public class ProfileController {
                 UserAccount dbUser = profileService.findByUserId(userId).getUserAccount();
 
                 if(dbUser != null && dbUser.getUserId().equals(authenticatedUser.getUserId())) {
-                    String imageUrl = mediaService.uploadImage(userId, file).get();
+                    String imageUrl = mediaService.uploadProfileImage(userId, file).get();
                     requestDto.setProfilePictureUrl(imageUrl);
                     profileService.updateProfile(userId, requestDto);
                 }
