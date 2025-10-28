@@ -1,6 +1,6 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.model;
 
-import io.github.PercivalGebashe.portfolio_project_showcase.dto.ProjectDTO;
+import io.github.PercivalGebashe.portfolio_project_showcase.dto.ParagraphContent;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -34,13 +34,12 @@ public class Project {
     @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "content", columnDefinition = "JSONB")
-    private List<ProjectDTO.ContentItem> content;
+    @Column(name = "project_image_url")
+    private String projectImageUrl;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "image_urls", columnDefinition = "JSONB")
-    private List<String> imageUrls;
+    @Column(name = "content", columnDefinition = "JSONB")
+    private List<ParagraphContent> content = new ArrayList<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "technologies", columnDefinition = "JSONB")

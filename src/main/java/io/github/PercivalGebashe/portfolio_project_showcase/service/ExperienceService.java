@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ExperienceService {
@@ -32,45 +34,53 @@ public class ExperienceService {
     }
 
     @Transactional
-    public void updateExperience(Integer userId, ExperienceUpdateDTO experiences) {
-
+    public void updateExperience(Integer userId, ExperienceUpdateDTO experienceUpdateDTO) {
         UserAccount userAccount = userAccountService.findByUserId(userId);
-        List<ExperienceDTO> experienceDTOS = experiences.toDto();
+        List<ExperienceDTO> dtos = experienceUpdateDTO.toDto();
 
-        List<Experience> existingExperiences = new ArrayList<>(userAccount.getExperiences());
-
-        List<Integer> incomingIds = experienceDTOS.stream()
-                .map(ExperienceDTO::getExperienceId)
-                .filter(Objects::nonNull)
+        // Separate DTOs into existing and new
+        List<ExperienceDTO> existingDtos = dtos.stream()
+                .filter(dto -> dto.getExperienceId() != null)
+                .toList();
+        List<ExperienceDTO> newDtos = dtos.stream()
+                .filter(dto -> dto.getExperienceId() == null)
                 .toList();
 
-        System.out.println("IDs: " + incomingIds);
-
-        existingExperiences.removeIf(e ->
-                e.getExperienceId() != null && !incomingIds.contains(e.getExperienceId())
-        );
-
-        userAccount.getExperiences().clear();
-        for (ExperienceDTO dto : experienceDTOS) {
-            Experience exp = dto.getExperienceId() != null
-                    ? experienceRepository.findById(dto.getExperienceId()).orElse(new Experience())
-                    : new Experience();
-
-            exp.setUserAccount(userAccount);
+        // Update existing experiences
+        existingDtos.forEach(dto -> {
+            Experience exp = experienceRepository.findById(dto.getExperienceId())
+                    .orElseThrow(() -> new IllegalStateException("Experience not found: " + dto.getExperienceId()));
             exp.setCompanyName(dto.getCompany());
             exp.setPosition(dto.getPosition());
-            exp.setLocation(dto.getLocation());
             exp.setDescription(dto.getDescription());
             exp.setTechnologies(dto.getTechnologies());
             exp.setStartDate(dto.getStartDate());
             exp.setEndDate(dto.getEndDate());
             exp.setCurrent(dto.isCurrent());
+        });
 
-            userAccount.getExperiences().add(exp);
-        }
+        List<Experience> newExperiences = newDtos.stream()
+                .map(dto -> {
+                    Experience exp = new Experience();
+                    exp.setUserAccount(userAccount);
+                    exp.setCompanyName(dto.getCompany());
+                    exp.setPosition(dto.getPosition());
+                    exp.setDescription(dto.getDescription());
+                    exp.setTechnologies(dto.getTechnologies());
+                    exp.setStartDate(dto.getStartDate());
+                    exp.setEndDate(dto.getEndDate());
+                    exp.setCurrent(dto.isCurrent());
+                    return exp;
+                })
+                .toList();
 
-        userAccountRepository.save(userAccount);
+        System.out.println("EXP TO SAVE: " + newExperiences);
+
+        List<Experience> savedExperiences = experienceRepository.saveAllAndFlush(newExperiences);
+
+        System.out.println("SAVED EXP: " + savedExperiences);
     }
+
 
     public UserAccount findUserById(Integer userId) {
         return userAccountService.findByUserId(userId);

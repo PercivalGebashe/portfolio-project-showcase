@@ -79,7 +79,7 @@ public class ProfileController {
                 UserAccount dbUser = profileService.findByUserId(userId).getUserAccount();
 
                 if(dbUser != null && dbUser.getUserId().equals(authenticatedUser.getUserId())) {
-                    String imageUrl = mediaService.uploadProfileImage(userId, file).get();
+                    String imageUrl = mediaService.uploadImage(file).get();
                     requestDto.setProfilePictureUrl(imageUrl);
                     profileService.updateProfile(userId, requestDto);
                 }
@@ -114,7 +114,7 @@ public class ProfileController {
 
                     model.addAttribute("profileUpdate", dto);
 
-                    return "update-profile";
+                    return "profile-update";
                 }
             }
         }

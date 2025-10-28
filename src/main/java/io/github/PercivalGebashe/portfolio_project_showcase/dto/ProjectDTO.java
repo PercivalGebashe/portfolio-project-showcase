@@ -1,6 +1,7 @@
 package io.github.PercivalGebashe.portfolio_project_showcase.dto;
 
 import lombok.*;
+
 import java.util.List;
 
 @NoArgsConstructor
@@ -12,13 +13,9 @@ public class ProjectDTO {
     private String title;
     private String summary;
     private String repoLink;
-    private List<ContentItem> content;
-    private List<String> imageUrls;
-
-    public static class ContentItem {
-        private String type; // "paragraph" or "screenshot"
-        private String value; // text or screenshot link
-    }
+    private String demoLink;
+    private List<String> technologies;
+    private List<ParagraphContent> content;
 }
 
 

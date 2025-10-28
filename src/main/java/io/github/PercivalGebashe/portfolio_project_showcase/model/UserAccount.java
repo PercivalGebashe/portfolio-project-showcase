@@ -56,7 +56,7 @@ public class UserAccount implements UserDetails {
     @Column(name = "recovery_token_expiration")
     private LocalDateTime recoveryTokenExpiration;
 
-    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Profile profile;
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Experience> experiences;

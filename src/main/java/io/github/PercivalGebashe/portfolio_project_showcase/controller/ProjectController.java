@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Controller
@@ -86,23 +87,27 @@ public class ProjectController {
 
     @PostMapping("/create/{userId}")
     public String createProject(
+            @ModelAttribute("projectDTO") ProjectDTO projectDTO,
             @PathVariable Integer userId,
-            @ModelAttribute ProjectDTO projectDTO,
-            @RequestParam("image") List<MultipartFile> files
+            @RequestParam("image") MultipartFile image,
+            @RequestParam(name = "images", required = false) List<MultipartFile> images
     ) throws ExecutionException, InterruptedException {
-        files.forEach(file -> System.out.println("file name: " + file.getOriginalFilename()));
+        System.out.println("Details: " + projectDTO);
+
+//        return "redirect:/project/create/" + userId;
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)){
             Object principal = authentication.getPrincipal();
 
             if(principal instanceof UserAccount authenticatedUser){
+
                 UserAccount dbUser = profileService.findByUserId(userId).getUserAccount();
+
                 if (dbUser != null && dbUser.getUserId().equals(authenticatedUser.getUserId())) {
-                    Project savedProject = projectService.createProject(userId, projectDTO);
-                    List<String> imageUrls = mediaService.upLoadImages(savedProject.getProjectId(), files).get();
-                    savedProject.setImageUrls(imageUrls);
-                    projectService.updateProject(savedProject);
+
+                    projectService.createProject(userId, projectDTO, image, images);
                 }
             }
         }

@@ -1,4 +1,0 @@
-ALTER TABLE projects
-DROP COLUMN IF EXISTS description,
-DROP COLUMN IF EXISTS repo_link,
-ADD COLUMN content JSONB;

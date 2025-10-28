@@ -1,67 +1,89 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Portfolio Hub</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <title>DevPort | Where Talent Meets Opportunity</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/js/index.js" defer></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
 
-<!-- Navbar -->
-<header th:fragment="navbar" class="navbar">
-    <div class="logo">DevPort</div>
-    <nav class="nav-links">
-        <a href="/">Home</a>
-        <a href="/developers">Browse</a>
-        <a href="/about">About</a>
+<!-- ===== HEADER / NAVBAR ===== -->
+<header>
+    <nav class="navbar">
+        <div class="logo"><a th:href="@{/}">DevPort</a></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a th:href="@{/auth/login}" class="btn-login">Log In</a></li>
+            <li><a th:href="@{/auth/signup}" class="btn-signup">Sign Up</a></li>
+        </ul>
+        <button class="menu-toggle">☰</button>
     </nav>
-    <div class="search-filter">
-        <form th:action="@{/developers}" method="get">
-            <input type="text" name="search" placeholder="Search developers...">
-            <select name="language">
-                <option value="">Filter by Language</option>
-                <option>Java</option>
-                <option>Python</option>
-                <option>React</option>
-                <option>Spring Boot</option>
-            </select>
-            <button type="submit">Go</button>
-        </form>
-    </div>
 </header>
 
-<!-- Hero -->
-<section class="hero">
-    <h1>Discover Developers. Hire Talent. Build Teams.</h1>
-    <p>Browse developers by skills, projects, and more.</p>
-</section>
-
-<!-- Cards Section -->
-<section class="cards">
-    <div class="card" th:each="dev : ${developers}">
-        <div class="card-banner" th:style="'background-image:url(' + ${dev.bannerImageUrl} + ')'"></div>
-        <div class="profile-pic">
-            <img th:src="${dev.profileImageUrl}" alt="Dev">
-        </div>
-        <h3 th:text="${dev.name}">Dev Name</h3>
-        <p class="tagline" th:text="${dev.tagline}">Tagline</p>
-        <div class="card-footer">
-            <span><ion-icon name="heart"></ion-icon><span th:text="${dev.likesCount}">0</span></span>
-            <span><ion-icon name="comment-bubble"></ion-icon><span th:text="${dev.projectsCount}">0</span> Projects</span>
-            <span>💡
-          <span th:each="skill, iterStat : ${dev.topSkills}">
-            <span th:text="${skill}"></span>
-            <span th:if="${!iterStat.last}">, </span>
-          </span>
-        </span>
+<!-- ===== HERO SECTION ===== -->
+<section id="hero" class="hero-section">
+    <div class="hero-content">
+        <h1>Welcome to <span class="highlight">DevPort</span></h1>
+        <p>Where talented developers meet opportunities, and recruiters discover brilliance.</p>
+        <div class="hero-cta">
+            <a th:href="@{/auth/signup}" class="btn btn-primary">Join Now</a>
+            <a href="#features" class="btn btn-secondary">Discover More</a>
         </div>
     </div>
 </section>
 
-<!-- Footer -->
+<!-- ===== FEATURES / CARDS ===== -->
+<section id="features" class="features-section">
+    <h2>Features</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <ion-icon name="people-outline"></ion-icon>
+            <h3>For Recruiters</h3>
+            <p>Find top talent quickly with detailed developer profiles and skills overview.</p>
+        </div>
+        <div class="feature-card">
+            <ion-icon name="laptop-outline"></ion-icon>
+            <h3>For Developers</h3>
+            <p>Showcase your projects, skills, and experience in a modern, eye-catching portfolio.</p>
+        </div>
+        <div class="feature-card">
+            <ion-icon name="chatbubbles-outline"></ion-icon>
+            <h3>Connect & Collaborate</h3>
+            <p>Engage with recruiters or fellow developers seamlessly within the platform.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ABOUT SECTION ===== -->
+<section id="about" class="about-section">
+    <div class="about-content">
+        <div class="about-text">
+            <h2>About DevPort</h2>
+            <p>DevPort is a platform bridging the gap between developers and recruiters.
+                We emphasize transparency, rich portfolios, and interactive features to make talent discovery effortless.</p>
+        </div>
+        <img src="/images/hero-illustration.png" alt="Developers Illustration" class="about-img"/>
+    </div>
+</section>
+
+<!-- ===== CONTACT / CTA ===== -->
+<section id="contact" class="contact-section">
+    <h2>Get Started</h2>
+    <p>Ready to explore DevPort? Sign up or log in to unlock the full potential!</p>
+    <div class="contact-cta">
+        <a th:href="@{/auth/signup}" class="btn btn-primary">Sign Up</a>
+        <a th:href="@{/auth/login}" class="btn btn-secondary">Log In</a>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
 <footer>
     <p>&copy; 2025 DevPort. All rights reserved.</p>
 </footer>

@@ -101,4 +101,8 @@ public class UserAccountService {
         return userAccountRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
     }
+
+    public boolean existsById(Integer userId) {
+        return userAccountRepository.existsById(userId);
+    }
 }

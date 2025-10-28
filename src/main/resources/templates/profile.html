@@ -12,7 +12,7 @@
 <!-- ===== Header / Navigation ===== -->
 <header id="header">
     <nav class="navbar">
-        <div class="logo"><a th:href="@{/index}">DevPort</a></div>
+        <div class="logo"><a th:href="@{/}">DevPort</a></div>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
@@ -32,13 +32,6 @@
                 </div>
             </div>
         </ul>
-
-
-        <!-- If not logged in or not the profile owner -->
-        <div th:if="${loggedInUser == null}">
-            <a th:href="@{/auth/login}" class="btn-login">Login</a>
-        </div>
-        <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
     </nav>
 </header>
 
@@ -132,7 +125,7 @@
     <h2>Projects</h2>
     <div class="projects-grid">
         <article class="project" th:each="project : ${projects}">
-            <img th:src="${project.imageUrls[0]}" alt="Portfolio Project Thumbnail" />
+            <img th:src="${project.projectImageUrl}" alt="Portfolio Project Thumbnail" />
             <div class="project-content">
                 <h3 th:text="${project.title}"></h3>
                 <p th:text="${project.summary}"></p>

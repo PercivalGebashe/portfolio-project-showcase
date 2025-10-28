@@ -47,7 +47,8 @@ public class SecurityConfig {
                                 "/profile/**",
                                 "/experience/**",
                                 "/project/**",
-                                "/user/**").permitAll()
+                                "/user/**",
+                                "/").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> {

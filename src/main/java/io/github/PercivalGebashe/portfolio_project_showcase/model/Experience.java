@@ -32,14 +32,11 @@ public class Experience {
     )
     private UserAccount userAccount;
 
-    @Column(name = "company_name", nullable = false)
+    @Column(name = "company", nullable = false)
     private String companyName;
 
     @Column(name = "position", nullable = false)
     private String position;
-
-    @Column(name = "location")
-    private String location;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -57,10 +54,9 @@ public class Experience {
     @Column(name = "is_current", nullable = false)
     private boolean isCurrent;
 
-    public Experience(String companyName, String position, String location, String description, List<String> technologies, LocalDate startDate, LocalDate endDate, boolean isCurrent) {
+    public Experience(String companyName, String position, String description, List<String> technologies, LocalDate startDate, LocalDate endDate, boolean isCurrent) {
         this.companyName = companyName;
         this.position = position;
-        this.location = location;
         this.description = description;
         this.technologies = technologies;
         this.startDate = startDate;
@@ -72,7 +68,6 @@ public class Experience {
         return new ExperienceDTO(
                 companyName,
                 position,
-                location,
                 description,
                 technologies,
                 startDate,

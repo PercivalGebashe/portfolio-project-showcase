@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Experience | DevPort</title>
     <link rel="stylesheet" href="/css/experience-update.css">
     <script src="/js/experience-update.js" defer></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
-
-<header id="header">
+<header>
     <nav class="navbar">
         <div class="logo"><a th:href="@{/index}">DevPort</a></div>
         <ul class="nav-links">
@@ -19,33 +20,39 @@
 </header>
 
 <section class="experience-update-section">
-    <h2>Update Experience</h2>
+    <div class="header-text">
+        <h1>Update Your Professional Experience</h1>
+        <p>Keep your profile up-to-date so recruiters see your latest skills and achievements.</p>
+    </div>
 
-    <form method="post" th:action="@{/experience/update/{userId}(userId=${loggedInUser.userId})}" class="experience-form" enctype="multipart/form-data">
-        <!-- Hidden input to store all experiences as JSON -->
-        <input type="hidden" name="experiences" id="experiencesJson" />
-        <input type="hidden" name="userId" id="userId" th:value="${loggedInUser.userId}"/>
+    <form method="post" th:action="@{/experience/update/{userId}(userId=${loggedInUser.userId})}"
+          class="experience-form" enctype="multipart/form-data">
+        <input type="hidden" name="experiences" id="experiencesJson">
+        <input type="hidden" name="userId" id="userId" th:value="${loggedInUser.userId}">
 
-        <!-- Existing experiences -->
         <div th:if="${!(loggedInUser.experiences.isEmpty())}" th:each="exp : ${loggedInUser.experiences}" class="experience-card">
             <div class="form-group">
                 <label>Position</label>
-                <input type="text" class="position" th:value="${exp.position}" required />
+                <input type="text" class="position" th:value="${exp.position}" placeholder="Backend Developer" required />
             </div>
+
             <div class="form-group">
                 <label>Company</label>
-                <input type="text" class="company" th:value="${exp.companyName}" required />
+                <input type="text" class="company" th:value="${exp.companyName}" placeholder="Company Name" required />
             </div>
+
             <div class="form-group">
                 <label>Description</label>
-                <textarea class="description" rows="3" th:text="${exp.description}"></textarea>
+                <textarea class="description" rows="3" th:text="${exp.description}" placeholder="Describe your responsibilities"></textarea>
             </div>
-            <div class="form-group">
-                <label>Technology Used</label>
-                <input type="text" class="technologies"
-                       th:value="${!(exp.technologies.isEmpty()) ? T(java.lang.String).join(', ', exp.technologies) : ''}" />
 
+            <div class="form-group">
+                <label>Technologies Used</label>
+                <input type="text" class="technologies"
+                       th:value="${!(exp.technologies.isEmpty()) ? T(java.lang.String).join(', ', exp.technologies) : ''}"
+                       placeholder="Java, Python, Spring Boot" />
             </div>
+
             <div class="form-row">
                 <div class="form-group">
                     <label>Start Date</label>
@@ -59,12 +66,13 @@
                     <label><input type="checkbox" class="isCurrent" th:checked="${exp.isCurrent}" /> Current</label>
                 </div>
             </div>
-            <button type="button" class="btn btn-remove">Remove</button>
+
+            <button type="button" class="btn btn-remove"><ion-icon name="trash-outline"></ion-icon> Remove</button>
         </div>
 
         <div class="form-actions">
-            <button type="button" class="btn btn-add">Add New Experience</button>
-            <button type="submit" class="btn btn-save">Save Changes</button>
+            <button type="button" class="btn btn-secondary btn-add"><ion-icon name="add-circle-outline"></ion-icon> Add New Experience</button>
+            <button type="submit" class="btn btn-primary btn-save"><ion-icon name="save-outline"></ion-icon> Save Changes</button>
         </div>
     </form>
 </section>

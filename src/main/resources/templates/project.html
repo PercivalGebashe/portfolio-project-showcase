@@ -2,38 +2,62 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/project.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${project.title} + ' | Deep Dive'">Project Deep Dive</title>
+    <link rel="stylesheet" href="/css/project.css">
+    <script defer>
+        // Fade-in on scroll using Intersection Observer
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+        });
+    </script>
 </head>
 <body>
-<header id="header">
-    <nav class="navbar">
-        <div class="logo"><a th:href="@{/index}">DevPort</a></div>
-        <ul class="nav-links">
-            <li><a th:href="@{/profile/{userId}(userId=${project.userAccount.userId})}">Back to profile</a></li>
-        </ul>
+<header class="navbar">
+    <div class="logo"><a th:href="@{/}">DevPort</a></div>
+    <nav>
+        <a th:href="@{/profile/{userId}(userId=${project.userAccount.userId})}" class="nav-link">Back to Profile</a>
     </nav>
 </header>
 
-<main class="deep-dive-container">
-    <section class="project-header">
-        <h1 th:text="${project.title}">Project Title</h1>
-        <p class="tagline" th:text="${project.summary}">Project tagline or short description.</p>
-        <a th:href="${project.repoLink}" class="btn" target="_blank" rel="noopener noreferrer">View Repository</a>
-    </section>
+<main class="deep-dive-article">
 
-    <section class="project-content" th:each="paragraph : ${project.content}">
-        <p th:text="${paragraph}">Lorem ipsum dolor sit amet...</p>
-    </section>
-
-    <section class="project-screenshots" th:if="${project.imageUrls}">
-        <h2>Screenshots</h2>
-        <div class="screenshots-grid">
-            <img th:each="screenshot : ${project.imageUrls}" th:src="${screenshot}" alt="Project Screenshot">
+    <!-- Project Banner -->
+    <section class="banner fade-in" th:style="'background-image: url(' + ${project.projectImageUrl} + ')'">
+        <div class="banner-overlay">
+            <h1 th:text="${project.title}">Project Title</h1>
+            <p class="summary" th:text="${project.summary}">Short description of the project...</p>
+            <div class="banner-links">
+                <a th:if="${project.repoLink}" th:href="${project.repoLink}" target="_blank" rel="noopener" class="btn">View Code</a>
+                <a th:if="${project.demoLink}" th:href="${project.demoLink}" target="_blank" rel="noopener" class="btn btn-secondary">Live Demo</a>
+            </div>
         </div>
     </section>
 
-    <section class="project-tech">
+    <!-- Article Content -->
+    <section class="article-content">
+        <div class="fade-in" th:each="contentItem : ${project.content}">
+            <div class="paragraph-card" th:if="${contentItem.text}">
+                <p th:text="${contentItem.text}">Lorem ipsum dolor sit amet...</p>
+            </div>
+
+            <div class="paragraph-image" th:if="${contentItem.ImageUrl}">
+                <img th:src="${contentItem.ImageUrl}" loading="lazy" alt="Screenshot">
+            </div>
+        </div>
+    </section>
+
+    <!-- Technologies Used -->
+    <section class="technologies fade-in" th:if="${project.technologies}">
         <h2>Technologies Used</h2>
         <ul>
             <li th:each="tech : ${project.technologies}" th:text="${tech}">Java</li>
@@ -41,5 +65,8 @@
     </section>
 </main>
 
+<footer class="footer fade-in">
+    <p>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Percival Gebashe — All Rights Reserved.</p>
+</footer>
 </body>
 </html>

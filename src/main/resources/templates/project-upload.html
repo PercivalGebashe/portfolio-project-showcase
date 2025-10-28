@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleafe.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Project Deep Dive</title>
+    <title>Create Project | Deep Dive</title>
     <link rel="stylesheet" href="/css/project-upload.css">
     <script src="/js/project-upload.js" defer></script>
 </head>
 <body>
+<header class="navbar">
+    <div class="logo"><a th:href="@{/}">DevPort</a></div>
+    <nav>
+        <a th:href="@{/profile/{userId}(userId=${loggedInUser.userId})}" class="nav-link">Back to Profile</a>
+    </nav>
+</header>
 
-<section class="deep-dive-form">
-    <h1>Create Project Deep Dive</h1>
+<main class="deep-dive-form">
+    <h1>Create a Project Deep Dive</h1>
+    <p class="subtitle">Craft your story with paragraphs, screenshots, and a showcase of your tech stack.</p>
 
     <form th:action="@{/project/create/{userId}(userId=${loggedInUser.userId})}"
           th:object="${projectDTO}" method="post" enctype="multipart/form-data">
@@ -24,33 +31,47 @@
         <!-- Project Summary -->
         <div class="input-box">
             <textarea th:field="*{summary}" rows="4" placeholder=" " required></textarea>
-            <label>Project Summary</label>
+            <label>Short Summary</label>
         </div>
 
-        <!-- Project repoLink -->
+        <!-- Project Repo Link -->
         <div class="input-box">
-            <input type="url" th:field="*{repoLink}" placeholder="https://example.com" required />
+            <input type="url" th:field="*{repoLink}" placeholder="https://github.com/your-repo" required>
             <label>Repository Link</label>
         </div>
 
-        <!-- Project image -->
+        <!-- Project Demo Link (Optional) -->
         <div class="input-box">
-            <input type="file" name="image" accept="image/jpeg, image/png" required />
-            <label>Project Image</label>
+            <input type="url" th:field="*{demoLink}" placeholder="https://your-demo.com">
+            <label>Live Demo Link (optional)</label>
         </div>
 
+        <!-- Project Banner Image -->
+        <div class="input-box">
+            <input type="file" name="image" accept="image/jpeg, image/png" required>
+            <label>Project Banner Image</label>
+        </div>
 
+        <!-- Technologies Used -->
+        <div class="input-box tech-input">
+            <input type="text" id="techInput" placeholder="Type technologies (comma separated)" />
+            <label>Technologies Used</label>
+            <div id="techList" class="tech-list"></div>
+            <input type="hidden" th:field="*{technologies}" id="technologiesField" />
+        </div>
 
-        <!-- Dynamic Content Items -->
-        <div class="section-block" id="dynamicSection">
-            <h2>Project Details</h2>
+        <!-- Dynamic Project Content -->
+        <section class="section-block" id="dynamicSection">
+            <h2>Deep Dive Content</h2>
+            <p class="section-hint">Add paragraphs with optional screenshots to tell your project's story.</p>
+
             <div id="contentContainer"></div>
-            <button type="button" class="add-btn" onclick="addParagraph()">+ Paragraph</button>
-            <button type="button" class="add-btn" onclick="addScreenshot()">+ Screenshot</button>
-        </div>
+
+            <button type="button" class="add-btn" onclick="addParagraph()">+ Add Paragraph</button>
+        </section>
 
         <button type="submit" class="submit-btn">Save Project</button>
     </form>
-</section>
+</main>
 </body>
 </html>

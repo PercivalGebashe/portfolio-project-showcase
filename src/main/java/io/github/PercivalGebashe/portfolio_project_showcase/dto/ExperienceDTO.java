@@ -18,17 +18,15 @@ public class ExperienceDTO {
     private Integer userId;
     private String company;
     private String position;
-    private String location;
     private String description;
     private List<String> technologies;
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean isCurrent;
 
-    public ExperienceDTO(String company, String position, String location, String description, List<String> technologies, LocalDate startDate, LocalDate endDate, boolean isCurrent) {
+    public ExperienceDTO(String company, String position, String description, List<String> technologies, LocalDate startDate, LocalDate endDate, boolean isCurrent) {
         this.company = company;
         this.position = position;
-        this.location = location;
         this.description = description;
         this.technologies = technologies;
         this.startDate = startDate;

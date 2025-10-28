@@ -43,12 +43,12 @@ public class Profile {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "profile_picture_url")
+    private String profilePictureUrl;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "skills", columnDefinition = "JSONB")
     private Map<String, String> skills = new HashMap<>(); // JSON string: {"Java":"Intermediate","Python":"Beginner"}
-
-    @Column(name = "profile_picture_url")
-    private String profilePictureUrl;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "contact_links", columnDefinition = "JSONB")
