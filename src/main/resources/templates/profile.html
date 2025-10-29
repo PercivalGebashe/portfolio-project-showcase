@@ -12,7 +12,7 @@
 <!-- ===== Header / Navigation ===== -->
 <header id="header">
     <nav class="navbar">
-        <div class="logo"><a th:href="@{/}">DevPort</a></div>
+<!--        <div class="logo"><a th:href="@{/}">DevPort</a></div>-->
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
@@ -20,18 +20,18 @@
             <li><a href="#experience">Experience</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#contact">Contact</a></li>
-            <!-- Create Button Dropdown -->
-            <div class="create-dropdown" th:if="${loggedInUser != null}">
-                <a class="btn-create" id="create-btn">Profile ▾</a>
-                <div class="dropdown-menu" id="create-menu">
-                    <a th:href="@{/profile/update/{userId}(userId=${loggedInUser.userId})}" class="dropdown-item">Update Profile</a>
-                    <a th:href="@{/experience/update/{user_id}(user_id=${loggedInUser.userId})}" class="dropdown-item">Update Experience</a>
-                    <a th:href="@{/project/create/{userId}(userId=${loggedInUser.userId})}" class="dropdown-item">Create Project</a>
-                    <a href="#" class="dropdown-item">Create Post</a>
-                    <a th:href="@{/auth/logout}" class="dropdown-item">Logout</a>
-                </div>
-            </div>
         </ul>
+        <!-- Create Button Dropdown -->
+        <div class="create-dropdown" th:if="${loggedInUser != null}">
+            <a class="btn-create" id="create-btn">Profile ▾</a>
+            <div class="dropdown-menu" id="create-menu">
+                <a th:href="@{/profile/update/{userId}(userId=${loggedInUser.userId})}" class="dropdown-item">Update Profile</a>
+                <a th:href="@{/experience/update/{user_id}(user_id=${loggedInUser.userId})}" class="dropdown-item">Update Experience</a>
+                <a th:href="@{/project/create/{userId}(userId=${loggedInUser.userId})}" class="dropdown-item">Create Project</a>
+                <a href="#" class="dropdown-item">Create Post</a>
+                <a th:href="@{/auth/logout}" class="dropdown-item">Logout</a>
+            </div>
+        </div>
     </nav>
 </header>
 
@@ -139,16 +139,16 @@
 </section>
 
 <!-- ===== Contact Section ===== -->
-<section id="contact" class="contact-section">
-    <h2>Contact Me</h2>
-    <p>Interested in working together or just saying hi? Let’s connect!</p>
-    <form th:action="@{/formsubmit/{email}(email=${profile.userAccount.email})}" method="POST" class="contact-form">
-        <input type="text" name="name" placeholder="Your Name" required />
-        <input type="email" name="email" placeholder="Your Email" required />
-        <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
-        <button type="submit" class="btn">Send Message</button>
-    </form>
-</section>
+<!--<section id="contact" class="contact-section">-->
+<!--    <h2>Contact Me</h2>-->
+<!--    <p>Interested in working together or just saying hi? Let’s connect!</p>-->
+<!--    <form th:action="@{/formsubmit/{email}(email=${profile.userAccount.email})}" method="POST" class="contact-form">-->
+<!--        <input type="text" name="name" placeholder="Your Name" required />-->
+<!--        <input type="email" name="email" placeholder="Your Email" required />-->
+<!--        <textarea name="message" placeholder="Your Message" rows="5" required></textarea>-->
+<!--        <button type="submit" class="btn">Send Message</button>-->
+<!--    </form>-->
+<!--</section>-->
 
 <!-- ===== Footer ===== -->
 <footer class="footer">

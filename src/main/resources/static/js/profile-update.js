@@ -31,6 +31,7 @@ function addContact(platform = "", link = "") {
             <option value="Twitter" ${platform === "Twitter" ? "selected" : ""}>Twitter</option>
             <option value="Instagram" ${platform === "Instagram" ? "selected" : ""}>Instagram</option>
             <option value="Portfolio" ${platform === "Portfolio" ? "selected" : ""}>Portfolio</option>
+            <option value="Email" ${platform === "mail" ? "selected" : ""}>Portfolio</option>
             <option value="Other" ${platform === "Other" ? "selected" : ""}>Other</option>
         </select>
         <input type="url" placeholder="Profile URL" class="contact-link" required value="${link}"/>

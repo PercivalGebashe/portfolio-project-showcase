@@ -56,11 +56,13 @@ header{
   margin:0 auto;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-end /*space-between;*/
   padding: 0.9rem 1.5rem;
   gap:1rem;
   height:var(--nav-height);
 }
+
+/* link removed
 .logo a{
   color:var(--accent);
   font-weight:800;
@@ -69,7 +71,10 @@ header{
   text-decoration:none;
   text-shadow:0 2px 14px rgba(79,140,255,0.06);
 }
+*/
+
 .nav-links{
+  margin-left: auto;
   list-style:none;
   display:flex;
   align-items:center;
