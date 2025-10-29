@@ -48,7 +48,8 @@ public class SecurityConfig {
                                 "/experience/**",
                                 "/project/**",
                                 "/user/**",
-                                "/").permitAll()
+                                "/",
+                                "/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> {
